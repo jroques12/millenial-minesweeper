@@ -53,7 +53,6 @@ play_screen.bind('<s>', lambda event: player_two.move_player('down', g_board))
 play_screen.bind('<w>', lambda event: player_two.move_player('up', g_board))
 # -------------------------------------------------Exits Game-----------------------------------------------------------
 play_screen.bind('<Escape>', lambda event: main_win.destroy())
-
 main_win.mainloop()
 
 

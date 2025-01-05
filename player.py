@@ -125,6 +125,7 @@ class GameBoard(Frame):
                 elif tile.color == 'green':
                     player.score_board.hp_label.configure(background=tile.default_color)
 
+
         # checks if all neutral tiles have been visited to evaluate win condition, disable the players if true, and show
         # messagebox displaying victory message.
         for tile in self.tile_list:
@@ -135,8 +136,22 @@ class GameBoard(Frame):
                 all_tiles_visited = False
 
         if all_tiles_visited:
-            player.disabled = True
-            messagebox.showinfo("You Won!", "You have visited all tiles!\nYou Win!\nPress Esc to exit.")
+
+            messagebox.showinfo("Game Over!", "All tiles have been visited, Calculating Score!\nPress Esc to exit game.")
+
+            # Calculates the winning score
+            winning_score = max([player.tile_count for player in Player.player_list])
+            winning_player = [player for player in Player.player_list if player.tile_count == winning_score][0]
+
+            # Disables player ability to move and displays each players score, if the player matches the winning score,
+            # displays player name
+            for player in Player.player_list:
+                player.disabled = True
+                print(f"{player.player_name} Has a score of: {player.tile_count}")
+                if player.tile_count == winning_score:
+                    print("and is the winner!")
+
+            print(f"{winning_player.player_name} is the winning player")
 
     # Reveals the tile color of each tile on the game board. Used for debugging mainly
     def reveal_all_tiles(self):
@@ -185,12 +200,14 @@ class Mine(Tile):
             self.did_damage = True
             if player_obj.hp <= 0:
                 player_obj.configure(background='black')
-                player_obj.lost(gb=game_board)
+                player_obj.lost()
             if verbose:
                 print(f"Player has {player_obj.hp} HP left!")
 
 
 class Player(Tile):
+    player_list= []
+
     def __init__(self, x_coordinate, y_coordinate, gb, outer_layer, player_number):
         Tile.__init__(self, x_coordinate=x_coordinate, y_coordinate=y_coordinate, window=gb)
         self.player_name = f"Player # {player_number}"
@@ -201,6 +218,9 @@ class Player(Tile):
         self.disabled = False
         self.owner = "None"
         self.score_board = ScoreBoard(outer_layer, self)
+
+        # Keeps track of all the players in the game for evaluating certain conditions IE win condition
+        Player.player_list.append(self)
 
     # the move_player function is the bread and butter of the whole game, it handles all the updates for the GUI info such
     # as HP remaining, adjacent mines, number of tiles converted, etc. Additionally, the trail functionality is partially
@@ -249,10 +269,10 @@ class Player(Tile):
 
 
     # Function to call when the player has lost/died.
-    def lost(self, gb):
+    def lost(self):
         self.disabled = True
         messagebox.showinfo("Lost", f"{self.player_name} is out of HP!\nPress Esc to exit")
-        gb.reveal_all_mines()
+        # gb.reveal_all_mines() used in single player
 
 
 # Frame class to keep track of player information on the outer layer
@@ -301,4 +321,6 @@ class ScoreBoard(Frame):
 # Added score tracking however once one player dies, they both are unable to move. Need to adjust so that only the dead
 # player cannot move.
 #
+# Got it working to where both players aren't disabled once one of them dies. Next step: Game needs to display a message
+# showing the winner of the game.
 #
