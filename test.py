@@ -24,28 +24,28 @@ top_left.grid(row=0, column=0)
 top_right = tk.Button(outer_layer)
 top_right.grid(row=0, column=12)
 
-bottom_left = tk.Button(outer_layer,text='End')
+bottom_left = tk.Button(outer_layer,text='End', command= exit)
 bottom_left.grid(row=12, column=0)
 
 bottom_right = tk.Button(outer_layer)
 bottom_right.grid(row=12, column=12)
 
-new_player = Player(1, 1, g_board, outer_layer)
-new_player.grid(row=1, column=1)
-new_player.score_board.grid(row=0, column=1)
+player_one = Player(1, 1, g_board, outer_layer, 1)
+player_one.grid(row=1, column=1)
+player_one.score_board.grid(row=0, column=1)
 
 
-player_two = Player(10, 10, g_board, outer_layer)
+player_two = Player(10, 10, g_board, outer_layer, 2)
 player_two.grid(row=10, column=10)
 player_two.score_board.grid(row=12, column=1)
 
-#g_board.reveal_all_mines()
+# g_board.reveal_all_mines()
 main_win.withdraw()
 # ---------------------------------------------------Player 1 Controls--------------------------------------------------
-play_screen.bind('<Right>', lambda event: new_player.move_player('right', g_board))
-play_screen.bind('<Left>', lambda event: new_player.move_player('left', g_board))
-play_screen.bind('<Down>', lambda event: new_player.move_player('down', g_board))
-play_screen.bind('<Up>', lambda event: new_player.move_player('up', g_board))
+play_screen.bind('<Right>', lambda event: player_one.move_player('right', g_board))
+play_screen.bind('<Left>', lambda event: player_one.move_player('left', g_board))
+play_screen.bind('<Down>', lambda event: player_one.move_player('down', g_board))
+play_screen.bind('<Up>', lambda event: player_one.move_player('up', g_board))
 # ---------------------------------------------------Player 2 Controls--------------------------------------------------
 play_screen.bind('<d>', lambda event: player_two.move_player('right', g_board))
 play_screen.bind('<a>', lambda event: player_two.move_player('left', g_board))
