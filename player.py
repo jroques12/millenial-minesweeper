@@ -107,7 +107,7 @@ class GameBoard(Frame):
                     tile.is_visited = True
                     # checks whether the current tile is a mine and detonates if it is
                     if isinstance(tile, Mine):
-                        tile.detonate(player, self)
+                        tile.detonate(player)
 
                     else:
                         player.tile_count +=1
@@ -191,7 +191,7 @@ class Mine(Tile):
         self.did_damage = False
         self.color = "red"
 
-    def detonate(self, player_obj, game_board, verbose=True):
+    def detonate(self, player_obj, verbose=True):
         player_obj.score_board.hp_label.configure(background='red')
         if self.has_charge:
             self.has_charge = False
@@ -303,7 +303,7 @@ class ScoreBoard(Frame):
 #
 # class method in game board not activating Tiles class method to reveal color. Figured out that this was due to the game
 # tile list being appended with a tile that was being put into the grid at the same time. Fixed by first appending a Tile
-# instance into the tile list and then putting them to grid from the list directly instead of gridding at time of instantiation.
+# instance into the tile list and then putting them to grid from the list directly instead of rendering at time of instantiation.
 #
 # Fixed the hovering so it no longer changes color sometimes causing confusion when the cursor is highlighting a button
 #
