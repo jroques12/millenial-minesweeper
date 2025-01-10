@@ -169,6 +169,7 @@ class Tile(tk.Button):
     def __init__(self, x_coordinate, y_coordinate, window: GameBoard):
         # Inherits initiation from tkinter Button
         Button.__init__(self, window)
+        self.window = window
         self.default_color = self.cget('bg')
         self.x_coordinate = x_coordinate
         self.y_coordinate = y_coordinate
@@ -187,12 +188,14 @@ class Tile(tk.Button):
     def end_jump(self):
         for player in Player.player_list:
             if player.disabled:
-                return
+                pass
             if player.in_transit:
                 player.x_coordinate = self.x_coordinate
                 player.y_coordinate = self.y_coordinate
                 player.grid(row=player.x_coordinate, column=player.y_coordinate)
                 player.in_transit = False
+                self.window.reveal_tile(player)
+                player.score_board.update_scoreboard(player)
 
 
 class Mine(Tile):
