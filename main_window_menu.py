@@ -3,7 +3,7 @@ import tkinter as tk
 
 
 def view_rules():
-    rules_window = tk.Tk()
+    rules_window = tk.Toplevel()
     rules_window.title(string='Rules')
     rules_text = tk.Label(rules_window, text="Welcome to Millennial Minesweeper. You may be familiar with the older \n"
                                              "version of Minesweeper if you grew up with computers before the internet.\n"

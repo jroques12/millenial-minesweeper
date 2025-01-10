@@ -5,6 +5,7 @@ from tkinter import Button
 from tkinter import Label
 import tkinter as tk
 
+
 # setting up the "board" using a frame and buttons as the backdrop and tiles
 class GameBoard(Frame):
     # pass in the frame to have the board set up on as "window" upon creation
@@ -37,9 +38,12 @@ class GameBoard(Frame):
             temp_x_coordinate = random.randint(1, 10)
             temp_y_coordinate = random.randint(1, 10)
 
-            # Checks whether the coordinates already exist in the ongoing list and makes sure that the mines aren't created
-            # on the starting tiles of the player. Need to add a condition to prevent starting tile for player 2 to be a mine.
-            if not [temp_x_coordinate, temp_y_coordinate] in mine_coordinate_list and [temp_x_coordinate, temp_y_coordinate] != [1, 1]:
+            # Checks whether the coordinates already exist in the ongoing list
+            # and makes sure that the mines aren't created
+            # on the starting tiles of the player. Need to add a condition to
+            # prevent starting tile for player 2 to be a mine.
+            if not [temp_x_coordinate, temp_y_coordinate] in mine_coordinate_list and [temp_x_coordinate,
+                                                                                       temp_y_coordinate] != [1, 1]:
                 # Appends the coordinates to the list of mine coordinates
                 mine_coordinate_list.append([temp_x_coordinate, temp_y_coordinate])
                 # Toggle verbose for terminal echo of mine coordinates
@@ -50,9 +54,9 @@ class GameBoard(Frame):
         for coordinate in mine_coordinate_list:
             self.mine_list.append(Mine(coordinate[0], coordinate[1], self))
 
-        #iterates over the possible game tile coordinates
-        for row in range(1, self.num_of_rows+1):
-            for column in range(1, self.num_of_columns+1):
+        # iterates over the possible game tile coordinates
+        for row in range(1, self.num_of_rows + 1):
+            for column in range(1, self.num_of_columns + 1):
                 # default behavior is to set tiles to neutral (not Mines)
                 is_mine = False
 
@@ -60,17 +64,17 @@ class GameBoard(Frame):
                 # current coordinate
                 for mine in self.mine_list:
                     if [row, column] == [mine.x_coordinate, mine.y_coordinate]:
-                        # Situates the mine on the actual gameboard grid and renders a tkinter button to act as a game mine
+                        # Situates the mine on the actual gameboard grid and renders a tkinter button to act as a mine
                         mine.grid(row=row, column=column)
 
                         # Appends the mine to the list of game pieces
                         self.game_piece_list.append(mine)
 
-                        #sets current tile state for whether mine is true for further method modification
+                        # sets current tile state for whether mine is true for further method modification
                         is_mine = True
 
-                # if the mine check for current coordinate clears with no mines, appends a neutral game tile to the board
-                # and list
+                # if the mine check for current coordinate clears with no mines
+                # appends a neutral game tile to the board and list
                 if not is_mine:
                     # Adds a Tile object to the game piece list and the neutral tile list. Renders the piece as a
                     # tkinter button on the board at this time
@@ -110,21 +114,19 @@ class GameBoard(Frame):
                         tile.detonate(player)
 
                     else:
-                        player.tile_count +=1
+                        player.tile_count += 1
                         print(f"{player.player_name} Score: {player.tile_count}")
 
-
-
                 # If the tile color is orange (meaning adjacent to a mine) it will change the players hp label to orange
-                # as well to indicate to the player they are within 1 tile of a mine (mine color is obscured by the player
-                # until they move off the tile)
+                # as well to indicate to the player they are within 1 tile of a mine
+                # (mine color is obscured by the player until they move off the tile)
                 if tile.color == 'orange':
                     player.score_board.hp_label.configure(background='orange')
 
-                # If the tile is neutral and not adjacent to a mine, changes the player hp background back to default color
+                # If the tile is neutral and not adjacent to a mine,
+                # changes the player hp background back to default color
                 elif tile.color == 'green':
                     player.score_board.hp_label.configure(background=tile.default_color)
-
 
         # checks if all neutral tiles have been visited to evaluate win condition, disable the players if true, and show
         # messagebox displaying victory message.
@@ -137,13 +139,14 @@ class GameBoard(Frame):
 
         if all_tiles_visited:
 
-            messagebox.showinfo("Game Over!", "All tiles have been visited, Calculating Score!\nPress Esc to exit game.")
+            messagebox.showinfo("Game Over!",
+                                "All tiles have been visited, Calculating Score!\nPress Esc to exit game.")
 
             # Calculates the winning score
             winning_score = max([player.tile_count for player in Player.player_list])
             winning_player = [player for player in Player.player_list if player.tile_count == winning_score][0]
 
-            # Disables player ability to move and displays each players score, if the player matches the winning score,
+            # Disables player ability to move and displays each player's score, if the player matches the winning score,
             # displays player name
             for player in Player.player_list:
                 player.disabled = True
@@ -159,10 +162,11 @@ class GameBoard(Frame):
             print(tile)
             tile.reveal_color()
 
+
 # Class for a neutral tile on the gameboard
 class Tile(tk.Button):
     # must be initiated with coordinates and which frame it will belong to, be sure not to duplicate tile coordinates
-    def __init__(self, x_coordinate, y_coordinate, window):
+    def __init__(self, x_coordinate, y_coordinate, window: GameBoard):
         # Inherits initiation from tkinter Button
         Button.__init__(self, window)
         self.default_color = self.cget('bg')
@@ -175,11 +179,20 @@ class Tile(tk.Button):
                            "Blue means no mines in the adjacent tiles\n" \
                            "Yellow means there is a mine in one of the adjacent tiles.\n" \
                            "Red means you have landed on a mine and possibly lost HP.\n"
-        self.bind("<Enter>", func=lambda e: self.configure(activebackground=self.cget('bg')))
+        self.configure(command=self.end_jump)
 
     def reveal_color(self):
         self.configure(background=self.color)
 
+    def end_jump(self):
+        for player in Player.player_list:
+            if player.disabled:
+                return
+            if player.in_transit:
+                player.x_coordinate = self.x_coordinate
+                player.y_coordinate = self.y_coordinate
+                player.grid(row=player.x_coordinate, column=player.y_coordinate)
+                player.in_transit = False
 
 
 class Mine(Tile):
@@ -201,12 +214,13 @@ class Mine(Tile):
             if player_obj.hp <= 0:
                 player_obj.configure(background='black')
                 player_obj.lost()
+
             if verbose:
-                print(f"Player has {player_obj.hp} HP left!")
+                print(f"{player_obj.player_name} has {player_obj.hp} HP left!")
 
 
 class Player(Tile):
-    player_list= []
+    player_list = []
 
     def __init__(self, x_coordinate, y_coordinate, gb, outer_layer, player_number):
         Tile.__init__(self, x_coordinate=x_coordinate, y_coordinate=y_coordinate, window=gb)
@@ -216,14 +230,17 @@ class Player(Tile):
         self.configure(background=self.color)
         self.tile_count = 0
         self.disabled = False
+        self.in_transit = False
         self.owner = "None"
         self.score_board = ScoreBoard(outer_layer, self)
 
         # Keeps track of all the players in the game for evaluating certain conditions IE win condition
         Player.player_list.append(self)
 
-    # the move_player function is the bread and butter of the whole game, it handles all the updates for the GUI info such
-    # as HP remaining, adjacent mines, number of tiles converted, etc. Additionally, the trail functionality is partially
+    # the move_player function is the bread and butter of the whole game,
+    # it handles all the updates for the GUI info such
+    # as HP remaining, adjacent mines, number of tiles converted, etc.
+    # Additionally, the trail functionality is partially
     # linked here as well as the GameBoard class.
 
     def move_player(self, direction, gb):
@@ -234,7 +251,7 @@ class Player(Tile):
                 self.x_coordinate = self.grid_info()['row']
 
             else:
-                self.grid(row=self.grid_info()['row']+1)
+                self.grid(row=self.grid_info()['row'] + 1)
                 self.x_coordinate = self.grid_info()['row']
                 gb.reveal_tile(player=self)
 
@@ -243,7 +260,7 @@ class Player(Tile):
                 self.x_coordinate = self.grid_info()['row']
                 pass
             else:
-                self.grid(row=self.grid_info()['row']-1)
+                self.grid(row=self.grid_info()['row'] - 1)
                 self.x_coordinate = self.grid_info()['row']
                 gb.reveal_tile(player=self)
 
@@ -252,7 +269,7 @@ class Player(Tile):
                 self.y_coordinate = self.grid_info()['column']
                 pass
             else:
-                self.grid(column=self.grid_info()['column']+1)
+                self.grid(column=self.grid_info()['column'] + 1)
                 self.y_coordinate = self.grid_info()['column']
                 gb.reveal_tile(player=self)
 
@@ -267,12 +284,13 @@ class Player(Tile):
 
         self.score_board.update_scoreboard(self)
 
+    # Sets up the player jump state to be utilized by tile method
+    def player_jump(self):
+        self.in_transit = True
 
     # Function to call when the player has lost/died.
     def lost(self):
         self.disabled = True
-        messagebox.showinfo("Lost", f"{self.player_name} is out of HP!\nPress Esc to exit")
-        # gb.reveal_all_mines() used in single player
 
 
 # Frame class to keep track of player information on the outer layer
@@ -288,7 +306,8 @@ class ScoreBoard(Frame):
     def update_scoreboard(self, player):
         self.player_hp_info = player.hp
         self.hp_label.configure(text=f"{self.linked_player} HP: {self.player_hp_info}")
-
+        if player.hp <= 0:
+            self.hp_label.configure(text=f"{self.linked_player} is dead")
 
 # ---------------------------------Change_Log_Notes---------------------------------------------------------------------
 # left off messing around with revealing all mines at once
@@ -324,3 +343,4 @@ class ScoreBoard(Frame):
 # Got it working to where both players aren't disabled once one of them dies. Next step: Game needs to display a message
 # showing the winner of the game.
 #
+# Added jumping functionality to "teleport" to the tile clicked

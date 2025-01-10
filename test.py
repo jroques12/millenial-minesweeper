@@ -18,13 +18,10 @@ g_board = GameBoard(outer_layer)
 g_board.grid(row=1, column=1)
 g_board.set_up_board(verbose=False)
 
-top_left = tk.Button(outer_layer, text="Jump")
-top_left.grid(row=0, column=0)
-
 top_right = tk.Button(outer_layer)
 top_right.grid(row=0, column=12)
 
-bottom_left = tk.Button(outer_layer,text='End', command= exit)
+bottom_left = tk.Button(outer_layer, text='End', command=exit)
 bottom_left.grid(row=12, column=0)
 
 bottom_right = tk.Button(outer_layer)
@@ -39,18 +36,25 @@ player_two = Player(10, 10, g_board, outer_layer, 2)
 player_two.grid(row=10, column=10)
 player_two.score_board.grid(row=12, column=1)
 
+p1_jump_button = tk.Button(outer_layer, text="P1 Jump", command=player_one.player_jump)
+p1_jump_button.grid(row=0, column=0)
+
+p2_jump_button = tk.Button(outer_layer, text="P2 Jump", command=player_two.player_jump)
+p2_jump_button.grid(row=11,column=0)
+
+
 # g_board.reveal_all_mines()
 main_win.withdraw()
 # ---------------------------------------------------Player 1 Controls--------------------------------------------------
-play_screen.bind('<Right>', lambda event: player_one.move_player('right', g_board))
-play_screen.bind('<Left>', lambda event: player_one.move_player('left', g_board))
-play_screen.bind('<Down>', lambda event: player_one.move_player('down', g_board))
-play_screen.bind('<Up>', lambda event: player_one.move_player('up', g_board))
+play_screen.bind('<d>', lambda event: player_one.move_player('right', g_board))
+play_screen.bind('<a>', lambda event: player_one.move_player('left', g_board))
+play_screen.bind('<s>', lambda event: player_one.move_player('down', g_board))
+play_screen.bind('<w>', lambda event: player_one.move_player('up', g_board))
 # ---------------------------------------------------Player 2 Controls--------------------------------------------------
-play_screen.bind('<d>', lambda event: player_two.move_player('right', g_board))
-play_screen.bind('<a>', lambda event: player_two.move_player('left', g_board))
-play_screen.bind('<s>', lambda event: player_two.move_player('down', g_board))
-play_screen.bind('<w>', lambda event: player_two.move_player('up', g_board))
+play_screen.bind('<Right>', lambda event: player_two.move_player('right', g_board))
+play_screen.bind('<Left>', lambda event: player_two.move_player('left', g_board))
+play_screen.bind('<Down>', lambda event: player_two.move_player('down', g_board))
+play_screen.bind('<Up>', lambda event: player_two.move_player('up', g_board))
 # -------------------------------------------------Exits Game-----------------------------------------------------------
 play_screen.bind('<Escape>', lambda event: main_win.destroy())
 main_win.mainloop()
