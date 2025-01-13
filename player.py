@@ -289,6 +289,8 @@ class Player(Tile):
 
     # Sets up the player jump state to be utilized by tile method
     def player_jump(self):
+        if self.disabled:
+            return
         self.in_transit = True
 
     # Function to call when the player has lost/died.

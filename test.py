@@ -27,11 +27,12 @@ bottom_left.grid(row=12, column=0)
 bottom_right = tk.Button(outer_layer)
 bottom_right.grid(row=12, column=12)
 
+# Player 1 instantiation
 player_one = Player(1, 1, g_board, outer_layer, 1)
 player_one.grid(row=1, column=1)
 player_one.score_board.grid(row=0, column=1)
 
-
+# Player 2 instantiation
 player_two = Player(10, 10, g_board, outer_layer, 2)
 player_two.grid(row=10, column=10)
 player_two.score_board.grid(row=12, column=1)
@@ -43,7 +44,6 @@ p2_jump_button = tk.Button(outer_layer, text="P2 Jump", command=player_two.playe
 p2_jump_button.grid(row=11,column=0)
 
 
-# g_board.reveal_all_mines()
 main_win.withdraw()
 # ---------------------------------------------------Player 1 Controls--------------------------------------------------
 play_screen.bind('<d>', lambda event: player_one.move_player('right', g_board))
